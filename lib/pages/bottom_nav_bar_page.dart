@@ -55,7 +55,7 @@ class _BottomNavBarPageState extends State<BottomNavBarPage> {
         onPressed: () {
           setState(() {
             pageController = PageController(initialPage: 1);
-            Navigator.pushReplacement(
+            Navigator.push(
                 context, MaterialPageRoute(builder: (context) => AddPage()));
           });
         },

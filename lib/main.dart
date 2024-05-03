@@ -25,7 +25,7 @@ class MyApp extends StatelessWidget {
       ),
       home: const SplashPage(),
       routes: {
-        HomePage.id: (context) => const HomePage(),
+        HomePage.id: (context) =>  HomePage(),
         BottomNavBarPage.id: (context) => const BottomNavBarPage(),
       },
     );

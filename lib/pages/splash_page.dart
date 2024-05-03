@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:todo/pages/bottom_nav_bar_page.dart';
 
 class SplashPage extends StatelessWidget {
@@ -7,7 +9,7 @@ class SplashPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey.shade200,
+      backgroundColor: const Color(0xffededed),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -20,7 +22,11 @@ class SplashPage extends StatelessWidget {
                     image: DecorationImage(
                         image: AssetImage('assets/images/splash.png'),
                         fit: BoxFit.cover)),
-              ),
+              )
+                  .animate()
+                  .fadeIn() // uses `Animate.defaultDuration`
+                  .scale() // inherits duration from fadeIn
+                  .move(delay: 300.ms, duration: 600.ms),
             ),
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -34,15 +40,15 @@ class SplashPage extends StatelessWidget {
                 const SizedBox(height: 20),
                 const Text(
                   'This productive tool is designed to help',
-                  style: TextStyle(fontSize: 15, color: Colors.grey),
+                  style: TextStyle(fontSize: 15, color: Color(0xff878490)),
                 ),
                 const Text(
                   'you better manage your task',
-                  style: TextStyle(fontSize: 15, color: Colors.grey),
+                  style: TextStyle(fontSize: 15, color: Color(0xff878490)),
                 ),
                 const Text(
                   'project-wise conveniently',
-                  style: TextStyle(fontSize: 15, color: Colors.grey),
+                  style: TextStyle(fontSize: 15, color: Color(0xff878490)),
                 ),
                 const SizedBox(height: 10),
                 GestureDetector(
@@ -76,17 +82,18 @@ class SplashPage extends StatelessWidget {
                               right: 10,
                             ),
                             child: IconButton(
-                                onPressed: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              BottomNavBarPage()));
-                                },
-                                icon: const Icon(
-                                  Icons.arrow_forward,
-                                  color: Colors.white,
-                                )),
+                              onPressed: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            BottomNavBarPage()));
+                              },
+                              icon: SvgPicture.asset(
+                                'assets/svg/arrow-right.svg',
+                                color: Colors.white,
+                              ),
+                            ),
                           ),
                         )
                       ],

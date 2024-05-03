@@ -112,7 +112,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             color: const Color(0xff9260f4).withOpacity(0.4),
                           ),
                           Text(
-                            project.selectedTime.toString(),
+                            project.startDate.toString(),
                             style: TextStyle(
                               color: const Color(0xff9260f4).withOpacity(0.4),
                             ),
