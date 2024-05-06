@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 
 import '../hive/model.dart';
-import '../type_of_tasks.dart';
 
 class CalendarPage extends StatefulWidget {
   const CalendarPage({super.key});
@@ -17,39 +16,21 @@ class CalendarPage extends StatefulWidget {
 class _CalendarPageState extends State<CalendarPage> {
   List<String> list1 = ["All", "To do", "In Progress", "Done"];
   String taskType = "All";
-  List<TypeOfTasks> list2 = [];
   PageController listController = PageController();
-  List<Project> projects = [];
   DateTime? selectedDateTime;
-
-  sortList() {
-    if (taskType == "All") {
-      setState(() {
-        list2 = ListOfTasks.list;
-      });
-    } else {
-      list2 = [];
-      for (TypeOfTasks screensCards in ListOfTasks.list) {
-        if (screensCards.stateOfTask == taskType) {
-          setState(() {
-            list2.add(screensCards);
-          });
-        }
-      }
-    }
-  }
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    sortList();
   }
+
+  List<Project> projects = [];
+  List<Project> projectDaily = [];
 
   Future<void> fetchData({required DateTime selectedDate}) async {
     var box = await Hive.openBox('mybox');
     setState(() {
-      projects.clear();
       for (var key in box.keys) {
         var data = box.get(key!.toString());
         if (data != null) {
@@ -58,19 +39,27 @@ class _CalendarPageState extends State<CalendarPage> {
           projects.add(project);
         }
       }
+      // for (Project task in projects) {
+      //   DateTime startDate = DateTime.parse(task.startDate!);
+      //
+      //   if (startDate.year == selectedDate.year &&
+      //       startDate.month == selectedDate.month &&
+      //       startDate.day == selectedDate.day) {
+      //     projects.clear();
+      //     projects.add(task);
+      //   } else {}
+      // }
     });
-     // O'zgaruvchilarni tozalash
+  }
 
-    // Tanlangan sana (selectedDate) vaqt oralig'ida proyektlarni olish
-    for (var project in projects) {
+  Future<void> dailyProject({required DateTime selectedDate}) async {
+    projectDaily.clear();
+    projectDaily.addAll(projects.where((project) {
       DateTime startDate = DateTime.parse(project.startDate!);
-      if (startDate.year == selectedDate.year &&
+      return startDate.year == selectedDate.year &&
           startDate.month == selectedDate.month &&
-          startDate.day == selectedDate.day) {
-        projects.add(project);
-      }
-    }
-    print('$selectedDate sdlkjmckm');
+          startDate.day == selectedDate.day;
+    }));
   }
 
   @override
@@ -96,11 +85,10 @@ class _CalendarPageState extends State<CalendarPage> {
               child: EasyDateTimeLine(
                 initialDate: DateTime.now(),
                 onDateChange: (selectedDate) {
-                  // Tanlangan sana o'zgarishi bilan malumotlarni yangilash
                   setState(() {
-                    fetchData(selectedDate: selectedDate);
-                    print('$selectedDate sejkskj');
+                    projects = [];
                   });
+                  dailyProject(selectedDate: selectedDate);
                 },
                 headerProps: const EasyHeaderProps(
                   dateFormatter: DateFormatter.fullDateDMY(),
@@ -134,9 +122,9 @@ class _CalendarPageState extends State<CalendarPage> {
             child: ListView.builder(
               scrollDirection: Axis.vertical,
               shrinkWrap: true,
-              itemCount: projects.length,
+              itemCount: projectDaily.length,
               itemBuilder: (context, index) {
-                Project project = projects[index];
+                Project project = projectDaily[index];
                 return GestureDetector(
                   child: Container(
                     margin: const EdgeInsets.only(
@@ -288,9 +276,8 @@ class _CalendarPageState extends State<CalendarPage> {
 
   void deleteProject(int index) async {
     // Remove the project from the list
-    setState(() {
-      projects.removeAt(index);
-    });
+
+    projects.removeAt(index);
 
     // Remove the project from Hive
     var box = await Hive.openBox('mybox');

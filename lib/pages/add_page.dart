@@ -4,7 +4,8 @@ import 'package:iconly/iconly.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:intl/intl.dart';
 import 'package:todo/hive/model.dart';
-import 'package:todo/hive/service.dart';
+
+import '../hive/hive_service.dart';
 
 class AddPage extends StatefulWidget {
   static const String id = "add_new_task";
@@ -322,24 +323,12 @@ class _AddPageState extends State<AddPage> {
             ),
           ),
         ),
-        //add button
-        // Padding(
-        //   padding: const EdgeInsets.only(left: 15, right: 15),
-        //   child: ElevatedButton(
-        //     onPressed: () {},
-        //     style: ElevatedButton.styleFrom(
-        //       minimumSize: Size(MediaQuery.of(context).size.width, 50),
-        //       foregroundColor: Colors.white,
-        //       backgroundColor: Colors.deepPurple,
-        //       shape: const StadiumBorder(),
-        //     ),
-        //     child: Text('Add Project'),
-        //   ),
-        // )
+
         GestureDetector(
           onTap: () {
             saveObj();
             getObj();
+
             makeClear();
           },
           child: Container(

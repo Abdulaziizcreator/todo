@@ -1,7 +1,12 @@
+
+
 class Project {
   String? projectName;
+
   String? description;
+
   String? startDate;
+
   String? endDate;
   String? taskGroup;
   String? selectedTime;
