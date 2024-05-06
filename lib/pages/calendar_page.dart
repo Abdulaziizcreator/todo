@@ -28,7 +28,7 @@ class _CalendarPageState extends State<CalendarPage> {
   List<Project> projects = [];
   List<Project> projectDaily = [];
 
-  Future<void> fetchData({required DateTime selectedDate}) async {
+  Future<void> fetchData() async {
     var box = await Hive.openBox('mybox');
     setState(() {
       for (var key in box.keys) {
@@ -39,27 +39,7 @@ class _CalendarPageState extends State<CalendarPage> {
           projects.add(project);
         }
       }
-      // for (Project task in projects) {
-      //   DateTime startDate = DateTime.parse(task.startDate!);
-      //
-      //   if (startDate.year == selectedDate.year &&
-      //       startDate.month == selectedDate.month &&
-      //       startDate.day == selectedDate.day) {
-      //     projects.clear();
-      //     projects.add(task);
-      //   } else {}
-      // }
     });
-  }
-
-  Future<void> dailyProject({required DateTime selectedDate}) async {
-    projectDaily.clear();
-    projectDaily.addAll(projects.where((project) {
-      DateTime startDate = DateTime.parse(project.startDate!);
-      return startDate.year == selectedDate.year &&
-          startDate.month == selectedDate.month &&
-          startDate.day == selectedDate.day;
-    }));
   }
 
   @override
@@ -86,9 +66,18 @@ class _CalendarPageState extends State<CalendarPage> {
                 initialDate: DateTime.now(),
                 onDateChange: (selectedDate) {
                   setState(() {
-                    projects = [];
+                    fetchData();
+                    for (Project project in projects) {
+                      DateTime time = DateTime.parse(project.startDate!);
+                      if (selectedDate.month == time.month &&
+                          selectedDate.day == time.day) {
+                        projectDaily.add(project);
+                      } else {
+                        projectDaily.clear();
+                        projects.clear();
+                      }
+                    }
                   });
-                  dailyProject(selectedDate: selectedDate);
                 },
                 headerProps: const EasyHeaderProps(
                   dateFormatter: DateFormatter.fullDateDMY(),
