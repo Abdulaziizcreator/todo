@@ -2,8 +2,12 @@ import 'dart:convert';
 
 import 'package:easy_date_timeline/easy_date_timeline.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 import 'package:hive/hive.dart';
+import 'package:todo/pages/home_page.dart';
 
+import '../hive/hive_service.dart';
 import '../hive/model.dart';
 
 class CalendarPage extends StatefulWidget {
@@ -42,12 +46,24 @@ class _CalendarPageState extends State<CalendarPage> {
     });
   }
 
+
+  HiveService hiveService = Get.put(HiveService());
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
+            leading: IconButton(
+              icon: SvgPicture.asset(
+                'assets/svg/arrow-left.svg',
+                color: Colors.black,
+              ),
+              onPressed: () {
+                Get.back(); // Navigate back to home page
+              },
+            ),
             title: const Align(
               alignment: Alignment.topCenter,
               child: Text(
@@ -64,20 +80,9 @@ class _CalendarPageState extends State<CalendarPage> {
             child: Container(
               child: EasyDateTimeLine(
                 initialDate: DateTime.now(),
-                onDateChange: (selectedDate) {
-                  setState(() {
-                    fetchData();
-                    for (Project project in projects) {
-                      DateTime time = DateTime.parse(project.startDate!);
-                      if (selectedDate.month == time.month &&
-                          selectedDate.day == time.day) {
-                        projectDaily.add(project);
-                      } else {
-                        projectDaily.clear();
-                        projects.clear();
-                      }
-                    }
-                  });
+                onDateChange: (selectedDate) async {
+                  print(selectedDate);
+                  hiveService.getTasksForSelectedDate(date: selectedDate);
                 },
                 headerProps: const EasyHeaderProps(
                   dateFormatter: DateFormatter.fullDateDMY(),
@@ -108,13 +113,16 @@ class _CalendarPageState extends State<CalendarPage> {
             ),
           ),
           SliverToBoxAdapter(
-            child: ListView.builder(
+            child: Obx(() => ListView.builder(
               scrollDirection: Axis.vertical,
               shrinkWrap: true,
-              itemCount: projectDaily.length,
+              itemCount: hiveService.tasksList.length,
               itemBuilder: (context, index) {
-                Project project = projectDaily[index];
+                hiveService.tasksList[index];
                 return GestureDetector(
+                  onTap: () {
+                    Get.to(HomePage());
+                  },
                   child: Container(
                     margin: const EdgeInsets.only(
                         top: 18, right: 24, left: 24, bottom: 6),
@@ -131,32 +139,30 @@ class _CalendarPageState extends State<CalendarPage> {
                     height: 120,
                     child: Stack(
                       children: [
-                        Align(
-                          alignment: Alignment.topLeft,
-                          child: Container(
-                            margin: const EdgeInsets.only(left: 15, top: 15),
-                            child: Text(
-                              project.taskGroup.toString(),
-                              style: const TextStyle(color: Color(0xffbab8c1)),
-                            ),
-                          ),
-                        ),
+                       Obx(() =>  Align(
+                         alignment: Alignment.topLeft,
+                         child: Container(
+                           child: Text(),
+                           margin: const EdgeInsets.only(left: 15, top: 15),
+                         ),
+                       ),),
                         Align(
                           alignment: Alignment.topRight,
                           child: Container(
-                              height: 36,
-                              width: 36,
-                              margin: const EdgeInsets.only(right: 15, top: 15),
-                              decoration: BoxDecoration(
-                                color: Colors.grey.withOpacity(0.4),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: IconButton(
-                                onPressed: () {
-                                  deleteProject(index);
-                                },
-                                icon: Icon(Icons.disabled_by_default_rounded),
-                              )),
+                            height: 36,
+                            width: 36,
+                            margin: const EdgeInsets.only(right: 15, top: 15),
+                            decoration: BoxDecoration(
+                              color: Colors.grey.withOpacity(0.4),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: IconButton(
+                              onPressed: () {
+                                deleteProject(index);
+                              },
+                              icon: Icon(Icons.disabled_by_default_rounded),
+                            ),
+                          ),
                         ),
                         Align(
                           alignment: Alignment.centerLeft,
@@ -180,7 +186,7 @@ class _CalendarPageState extends State<CalendarPage> {
                                 Icon(
                                   Icons.timer_rounded,
                                   color:
-                                      const Color(0xff9260f4).withOpacity(0.4),
+                                  const Color(0xff9260f4).withOpacity(0.4),
                                 ),
                                 Text(
                                   project.startDate.toString(),
@@ -198,7 +204,7 @@ class _CalendarPageState extends State<CalendarPage> {
                   ),
                 );
               },
-            ),
+            ),)
           ),
 
           // SliverToBoxAdapter(

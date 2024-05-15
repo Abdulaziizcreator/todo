@@ -33,23 +33,47 @@ class _BottomNavBarPageState extends State<BottomNavBarPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: PageView(
-        controller: pageController,
-        scrollDirection: Axis.horizontal,
-        children: [
-          HomePage(),
-          CalendarPage(),
-          DocumentPage(),
-          ProfilePage(),
-        ],
-        onPageChanged: (int index) {
-          setState(
-            () {
-              _bottomNavIndex = index;
-              pageController = PageController(initialPage: index);
-            },
-          );
-        },
+      body:  Container(
+        decoration: BoxDecoration(
+          gradient: RadialGradient(
+            center: Alignment.topLeft,
+            tileMode: TileMode.clamp,
+            radius: 2,
+            colors: [
+              Colors.white,
+              Colors.white,
+              Colors.purpleAccent.shade100.withOpacity(0.5),
+              Colors.white,
+              Colors.white,
+              Colors.white,
+              Colors.white,
+              Colors.yellowAccent.shade100.withOpacity(0.5),
+              Colors.white,
+              Colors.white,
+              Colors.white,
+              Colors.white,
+              Colors.blueAccent.shade100.withOpacity(0.5),
+            ],
+          ),
+        ),
+        child: PageView(
+          controller: pageController,
+          scrollDirection: Axis.horizontal,
+          children: [
+            HomePage(),
+            CalendarPage(),
+            DocumentPage(),
+            ProfilePage(),
+          ],
+          onPageChanged: (int index) {
+            setState(
+                  () {
+                _bottomNavIndex = index;
+                pageController = PageController(initialPage: index);
+              },
+            );
+          },
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -75,13 +99,13 @@ class _BottomNavBarPageState extends State<BottomNavBarPage> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: AnimatedBottomNavigationBar(
-          backgroundColor: const Color(0xffeee9ff).withOpacity(0.6),
-          leftCornerRadius: 34,
-          rightCornerRadius: 34,
+          backgroundColor: const Color(0xffeee9ff),
+          leftCornerRadius: 30,
+          rightCornerRadius: 30,
           icons: iconList,
           activeIndex: _bottomNavIndex,
           gapLocation: GapLocation.center,
-          notchMargin: 10,
+          notchMargin: 8,
           activeColor: const Color(0xff5f33e1),
           inactiveColor: const Color(0xffb5a0f3),
           notchSmoothness: NotchSmoothness.softEdge,

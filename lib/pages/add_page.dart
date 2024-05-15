@@ -1,9 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:iconly/iconly.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:intl/intl.dart';
 import 'package:todo/hive/model.dart';
+import 'package:todo/pages/bottom_nav_bar_page.dart';
 
 import '../hive/hive_service.dart';
 
@@ -74,7 +76,8 @@ class _AddPageState extends State<AddPage> {
         taskGroup: taskGroup,
         selectedTime: selectedTime,
       );
-      HiveService.storeObject(obj: project, objKey: startDateString);
+      HiveService.storeObject(
+          obj: project, objKey: '$startDateString+$description');
     } else {
       print(
           'Errorrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr');
@@ -89,11 +92,6 @@ class _AddPageState extends State<AddPage> {
       endDate = today;
       selectedTimeNow = atTheMoment;
     });
-  }
-
-  void getObj() {
-    Project project =
-        HiveService.getProjectObject(projectKey: startDate.toString());
   }
 
   void _showTimePicker() {
@@ -111,6 +109,20 @@ class _AddPageState extends State<AddPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: SvgPicture.asset(
+            'assets/svg/arrow-left.svg',
+            color: Colors.black,
+          ),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => BottomNavBarPage(),
+              ),
+            );
+          },
+        ),
         title: Text('Add Project'),
         centerTitle: true,
         actions: [
@@ -327,7 +339,6 @@ class _AddPageState extends State<AddPage> {
         GestureDetector(
           onTap: () {
             saveObj();
-            getObj();
 
             makeClear();
           },
